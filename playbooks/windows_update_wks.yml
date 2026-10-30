@@ -7,7 +7,7 @@
   tasks:
     - name: Install updates from Microsoft Update
       ansible.windows.win_updates:
-        server_selection: microsoft_update
+        server_selection: windows_update
         category_names:
           - SecurityUpdates
           - CriticalUpdates
