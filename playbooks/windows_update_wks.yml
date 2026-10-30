@@ -13,6 +13,7 @@
           - CriticalUpdates
           - UpdateRollups
           - DefinitionUpdates
+          - Updates
         reboot: true
         reboot_timeout: 3500
       register: update_result
