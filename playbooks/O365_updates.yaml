@@ -1,0 +1,42 @@
+- name: Update Microsoft 365 Apps on Windows
+  hosts: windows
+  gather_facts: false
+  vars:
+    c2r_path: 'C:\Program Files\Common Files\Microsoft Shared\ClickToRun\OfficeC2RClient.exe'
+    c2r_cfg: 'HKLM:\SOFTWARE\Microsoft\Office\ClickToRun\Configuration'
+  tasks:
+    - name: Control Click-to-Run
+      ansible.windows.win_stat:
+        path: "{{ c2r_path }}"
+      register: c2r
+
+    - name: Do not update if no M365
+      ansible.builtin.meta: end_host
+      when: not c2r.stat.exists
+
+    - name: Current Office
+      ansible.windows.win_reg_stat:
+        path: "{{ c2r_cfg }}"
+        name: VersionToReport
+      register: ver_before
+
+    - name: Silent start
+      ansible.windows.win_command: '"{{ c2r_path }}" /update SCHEDULEDTASK displaylevel=false forceappshutdown=true'
+      register: o365_update
+      changed_when: true
+
+    - name: Wait till end (OfficeC2RClient)
+      ansible.windows.win_shell: |
+        $t = 0
+        while ((Get-Process OfficeC2RClient -ErrorAction SilentlyContinue) -and $t -lt 1800) { Start-Sleep 10; $t += 10 }
+      changed_when: false
+
+    - name: Version after
+      ansible.windows.win_reg_stat:
+        path: "{{ c2r_cfg }}"
+        name: VersionToReport
+      register: ver_after
+
+    - name: Result
+      ansible.builtin.debug:
+        msg: "{{ ver_before.value }} -> {{ ver_after.value }}"
