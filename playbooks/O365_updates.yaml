@@ -1,5 +1,5 @@
 - name: Update Microsoft 365 Apps on Windows
-  hosts: windows
+  hosts: all
   gather_facts: false
   vars:
     c2r_path: 'C:\Program Files\Common Files\Microsoft Shared\ClickToRun\OfficeC2RClient.exe'
