@@ -25,9 +25,9 @@
           - "Failed: {{ update_result.failed_update_count }}"
           - "Reboot performed: {{ update_result.reboot_required }}"
 
-    - name: Always reboot after Windows Update
-      ansible.windows.win_reboot:
-        msg: "full reboot Windows"
-        pre_reboot_delay: 60
-        reboot_timeout: 3500
-        post_reboot_delay: 60
+    #- name: Always reboot after Windows Update
+    #  ansible.windows.win_reboot:
+     #   msg: "full reboot Windows"
+      #  pre_reboot_delay: 60
+       # reboot_timeout: 3500
+        #post_reboot_delay: 60
