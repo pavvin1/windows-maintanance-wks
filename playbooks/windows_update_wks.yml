@@ -33,7 +33,7 @@
       ansible.windows.win_reboot:
         reboot_timeout: 1800
         post_reboot_delay: 60
-        test_commands:
+        test_command:
           - cmd.exe /c echo rebooted
       when: update_result.reboot_required
 
