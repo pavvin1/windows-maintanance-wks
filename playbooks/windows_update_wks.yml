@@ -1,11 +1,12 @@
----
 - name: Weekly Windows Update
   hosts: windows_clients
   gather_facts: false
   serial: 7
+  max_fail_percentage: 30        # Fail onely if more than 30%
+  any_errors_fatal: false
 
   tasks:
-    - name: Install updates from Microsoft Update
+    - name: Install updates
       ansible.windows.win_updates:
         server_selection: windows_update
         category_names:
@@ -14,20 +15,31 @@
           - UpdateRollups
           - DefinitionUpdates
           - Updates
-        reboot: true
-        reboot_timeout: 3500
+        reboot: false                
+        reject_list:
+          - "*Preview*"              # Ignore Preview
+        state: installed
       register: update_result
+      retries: 3
+      delay: 60
+      until: update_result is not failed
 
-    - name: Show summary
+    - name: Fail if some updates failed
+      ansible.builtin.fail:
+        msg: "{{ update_result.failed_update_count }} updates failed"
+      when: update_result.failed_update_count | int > 0
+
+    - name: Reboot if needed
+      ansible.windows.win_reboot:
+        reboot_timeout: 1800
+        post_reboot_delay: 60
+        test_commands:
+          - cmd.exe /c echo rebooted
+      when: update_result.reboot_required
+
+    - name: Summary
       ansible.builtin.debug:
         msg:
           - "Installed: {{ update_result.installed_update_count }}"
-          - "Failed: {{ update_result.failed_update_count }}"
-          - "Reboot performed: {{ update_result.reboot_required }}"
-          
-    - name: Always reboot after Windows Update
-      ansible.windows.win_reboot:
-        msg: "full reboot Windows"
-        pre_reboot_delay: 60
-        reboot_timeout: 3500
-        post_reboot_delay: 60
+          - "Failed:    {{ update_result.failed_update_count }}"
+          - "Rebooted:  {{ update_result.reboot_required }}"
