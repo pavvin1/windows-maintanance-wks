@@ -14,11 +14,9 @@
           - CriticalUpdates
           - UpdateRollups
           - DefinitionUpdates
-          - Updates
-        reboot: false                
+        reboot: false
         reject_list:
-          - "*Preview*"              # Ignore Preview
-        state: installed
+          - '.*Preview.*'        # Ignore this type of updates
       register: update_result
       retries: 3
       delay: 60
