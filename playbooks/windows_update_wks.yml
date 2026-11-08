@@ -14,6 +14,8 @@
           - CriticalUpdates
           - UpdateRollups
           - DefinitionUpdates
+          - Updates
+          - Drivers
         reboot: false
         reject_list:
           - '.*Preview.*'        # Ignore this type of updates
