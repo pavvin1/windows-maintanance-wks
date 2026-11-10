@@ -15,7 +15,7 @@
           - UpdateRollups
           - DefinitionUpdates
           - Updates
-          - Drivers
+        # - Drivers
         reboot: true
         reboot_timeout: 1000
       register: update_result
