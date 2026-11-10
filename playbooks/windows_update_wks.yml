@@ -1,8 +1,9 @@
+---
 - name: Weekly Windows Update
   hosts: windows_clients
   gather_facts: false
   serial: 7
-  max_fail_percentage: 30        # Fail only if more than 30%
+  max_fail_percentage: 30
   any_errors_fatal: false
 
   tasks:
@@ -19,18 +20,29 @@
         reboot: true
         reboot_timeout: 1000
       register: update_result
+      ignore_errors: true
+
+    - name: Wait for host to come back online after updates
+      ansible.builtin.wait_for_connection:
+        delay: 30
+        connect_timeout: 120
+        timeout: 900
+      when: update_result is unreachable
 
     - name: Show summary
       ansible.builtin.debug:
         msg:
-          - "Installed: {{ update_result.installed_update_count }}"
-          - "Failed: {{ update_result.failed_update_count }}"
-          - "Reboot performed: {{ update_result.reboot_required }}"
+          - "Installed: {{ update_result.installed_update_count | default('n/a') }}"
+          - "Failed: {{ update_result.failed_update_count | default('n/a') }}"
+          - "Reboot required: {{ update_result.reboot_required | default('n/a') }}"
+      when: update_result is not unreachable
 
-    - name: Always reboot after Windows Update
+    - name: Force reboot if updates require it and host hasn't rebooted yet
       ansible.windows.win_reboot:
-        msg: "full reboot Windows"
+        msg: "Reboot after Windows Update"
         pre_reboot_delay: 60
         reboot_timeout: 1800
         post_reboot_delay: 60
-      ignore_errors: true
+      when:
+        - update_result is not unreachable
+        - update_result.reboot_required | default(false)
