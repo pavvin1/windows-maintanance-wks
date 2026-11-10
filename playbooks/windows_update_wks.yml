@@ -2,7 +2,7 @@
   hosts: windows_clients
   gather_facts: false
   serial: 7
-  max_fail_percentage: 30        # Fail onely if more than 30%
+  max_fail_percentage: 30        # Fail only if more than 30%
   any_errors_fatal: false
   
   tasks:
