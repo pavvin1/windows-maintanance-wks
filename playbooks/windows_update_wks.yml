@@ -4,7 +4,7 @@
   serial: 7
   max_fail_percentage: 30        # Fail only if more than 30%
   any_errors_fatal: false
-  
+
   tasks:
     - name: Install updates from Microsoft Update
       ansible.windows.win_updates:
@@ -22,10 +22,10 @@
 
     - name: Show summary
       ansible.builtin.debug:
-      msg:
-        - "Installed: {{ update_result.installed_update_count }}"
-        - "Failed: {{ update_result.failed_update_count }}"
-        - "Reboot performed: {{ update_result.reboot_required }}"
+        msg:
+          - "Installed: {{ update_result.installed_update_count }}"
+          - "Failed: {{ update_result.failed_update_count }}"
+          - "Reboot performed: {{ update_result.reboot_required }}"
 
     - name: Always reboot after Windows Update
       ansible.windows.win_reboot:
