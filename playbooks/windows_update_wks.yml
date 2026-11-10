@@ -21,7 +21,7 @@
       register: update_result
 
     - name: Show summary
-        ansible.builtin.debug:
+      ansible.builtin.debug:
         msg:
           - "Installed: {{ update_result.installed_update_count }}"
           - "Failed: {{ update_result.failed_update_count }}"
