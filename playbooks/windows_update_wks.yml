@@ -18,14 +18,14 @@
           - Updates
         # - Drivers
         reboot: true
-        reboot_timeout: 1000
+        reboot_timeout: 1600
       register: update_result
       ignore_errors: true
 
     - name: Wait for host to come back online after updates
       ansible.builtin.wait_for_connection:
         delay: 30
-        connect_timeout: 120
+        connect_timeout: 320
         timeout: 900
       when: update_result is unreachable
 
@@ -41,7 +41,7 @@
       ansible.windows.win_reboot:
         msg: "Reboot after Windows Update"
         pre_reboot_delay: 60
-        reboot_timeout: 1800
+        reboot_timeout: 2000
         post_reboot_delay: 60
       when:
         - update_result is not unreachable
